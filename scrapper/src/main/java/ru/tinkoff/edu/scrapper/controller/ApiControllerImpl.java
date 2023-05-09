@@ -1,9 +1,15 @@
 package ru.tinkoff.edu.scrapper.controller;
 
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import ru.tinkoff.edu.scrapper.data.entity.Link;
 import ru.tinkoff.edu.scrapper.dto.request.AddLinkRequest;
 import ru.tinkoff.edu.scrapper.dto.request.RemoveLinkRequest;
@@ -12,8 +18,6 @@ import ru.tinkoff.edu.scrapper.dto.response.ListLinksResponse;
 import ru.tinkoff.edu.scrapper.service.ChatService;
 import ru.tinkoff.edu.scrapper.service.LinkService;
 import ru.tinkoff.edu.scrapper.utils.DtoMapper;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,7 +45,7 @@ public class ApiControllerImpl implements ApiController {
             method = RequestMethod.GET,
             value = "/links",
             produces = { "application/json" }
-    ) 
+    )
     public ResponseEntity<ListLinksResponse> linksGet(@NotNull @RequestHeader(value = "Tg-Chat-Id") Long tgChatId) {
         List<Link> links = linkService.listAll(tgChatId);
         return ResponseEntity.ok(dtoMapper.convertListLinkToListLinkResponse(links));

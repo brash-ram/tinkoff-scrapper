@@ -8,7 +8,7 @@ import ru.tinkoff.edu.bot.tg.SendMessageAdapter;
 
 @Component
 public class HelpCommandHandler extends MessageHandler {
-    private String HELP_MESSAGE;
+    private String helpMessage;
 
     public HelpCommandHandler(Bot bot) {
         super(bot);
@@ -26,15 +26,15 @@ public class HelpCommandHandler extends MessageHandler {
     }
 
     private String getHelpMessage() {
-        if (HELP_MESSAGE == null) {
+        if (helpMessage == null) {
             StringBuilder sb = new StringBuilder();
             sb.append("/start -- зарегистрировать пользователя\n")
                     .append("/help -- вывести окно с командами\n")
                     .append("/track -- начать отслеживание ссылки\n")
                     .append("/untrack -- прекратить отслеживание ссылки\n")
                     .append("/list -- показать список отслеживаемых ссылок\n");
-            HELP_MESSAGE = sb.toString();
+            helpMessage = sb.toString();
         }
-        return HELP_MESSAGE;
+        return helpMessage;
     }
 }

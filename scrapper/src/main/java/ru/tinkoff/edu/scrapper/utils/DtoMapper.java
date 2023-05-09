@@ -1,13 +1,12 @@
 package ru.tinkoff.edu.scrapper.utils;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.tinkoff.edu.scrapper.data.entity.Link;
 import ru.tinkoff.edu.scrapper.dto.response.LinkResponse;
 import ru.tinkoff.edu.scrapper.dto.response.ListLinksResponse;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor

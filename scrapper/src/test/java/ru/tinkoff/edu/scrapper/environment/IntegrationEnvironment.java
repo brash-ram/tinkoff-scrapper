@@ -1,5 +1,10 @@
 package ru.tinkoff.edu.scrapper.environment;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import javax.sql.DataSource;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -25,14 +30,56 @@ import ru.tinkoff.edu.scrapper.service.LinkService;
 import ru.tinkoff.edu.scrapper.service.jpaImpl.JpaChatService;
 import ru.tinkoff.edu.scrapper.service.jpaImpl.JpaLinkService;
 
-import javax.sql.DataSource;
-import java.io.File;
-import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.DriverManager;
-
 @ContextConfiguration(classes = IntegrationEnvironment.IntegrationEnvironmentConfiguration.class)
 public abstract class IntegrationEnvironment {
+
+    private static final DataSource TEST_DATA_SOURCE;
+
+    private static final PostgreSQLContainer POSTGRESQL_CONTAINER;
+
+
+    static {
+        String username = "postgres";
+        String password = "qwerty";
+        String dbName = "postgres";
+        Integer dbPort = 5432;
+        POSTGRESQL_CONTAINER = new PostgreSQLContainer<>(DockerImageName.parse("postgres:latest"))
+            .withDatabaseName(dbName)
+            .withUsername(username)
+            .withPassword(password)
+            .withExposedPorts(dbPort);
+        POSTGRESQL_CONTAINER.start();
+        runMigration();
+        TEST_DATA_SOURCE = DataSourceBuilder.create()
+            .url(POSTGRESQL_CONTAINER.getJdbcUrl())
+            .username(POSTGRESQL_CONTAINER.getUsername())
+            .password(POSTGRESQL_CONTAINER.getPassword())
+            .build();
+    }
+
+    @DynamicPropertySource
+    static void jdbcProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
+        registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
+        registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
+    }
+
+    private static void runMigration() {
+        try {
+            String url = POSTGRESQL_CONTAINER.getJdbcUrl();
+            String username = POSTGRESQL_CONTAINER.getUsername();
+            String password = POSTGRESQL_CONTAINER.getPassword();
+            Connection connection = DriverManager.getConnection(url, username, password);
+            Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+            Path changeLogPath = new File(".").toPath().toAbsolutePath().getParent().getParent()
+                .resolve("migrations");
+            Liquibase liquibase = new liquibase.Liquibase("master.xml",
+                new DirectoryResourceAccessor(changeLogPath), database);
+            liquibase.update(new Contexts(), new LabelExpression());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Configuration
     public static class JpaIntegrationEnvironmentConfiguration {
@@ -75,50 +122,4 @@ public abstract class IntegrationEnvironment {
 
     }
 
-    private static final DataSource TEST_DATA_SOURCE;
-
-    private static final PostgreSQLContainer POSTGRESQL_CONTAINER;
-
-    static {
-        String username = "postgres";
-        String password = "qwerty";
-        String dbName = "postgres";
-        Integer dbPort = 5432;
-        POSTGRESQL_CONTAINER = new PostgreSQLContainer<>(DockerImageName.parse("postgres:latest"))
-                .withDatabaseName(dbName)
-                .withUsername(username)
-                .withPassword(password)
-                .withExposedPorts(dbPort);
-        POSTGRESQL_CONTAINER.start();
-        runMigration();
-        TEST_DATA_SOURCE = DataSourceBuilder.create()
-                .url(POSTGRESQL_CONTAINER.getJdbcUrl())
-                .username(POSTGRESQL_CONTAINER.getUsername())
-                .password(POSTGRESQL_CONTAINER.getPassword())
-                .build();
-    }
-
-    @DynamicPropertySource
-    static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
-        registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
-        registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
-    }
-
-    private static void runMigration() {
-        try {
-            String url = POSTGRESQL_CONTAINER.getJdbcUrl();
-            String username = POSTGRESQL_CONTAINER.getUsername();
-            String password = POSTGRESQL_CONTAINER.getPassword();
-            Connection connection = DriverManager.getConnection(url, username, password);
-            Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-            Path changeLogPath = new File(".").toPath().toAbsolutePath().getParent().getParent()
-                    .resolve("migrations");
-            Liquibase liquibase = new liquibase.Liquibase("master.xml",
-                    new DirectoryResourceAccessor(changeLogPath), database);
-            liquibase.update(new Contexts(), new LabelExpression());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

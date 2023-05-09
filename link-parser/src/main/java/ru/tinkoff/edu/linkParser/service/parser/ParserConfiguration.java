@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.service.parser;
+package ru.tinkoff.edu.linkParser.service.parser;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

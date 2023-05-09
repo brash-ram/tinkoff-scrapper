@@ -1,10 +1,9 @@
-package ru.tinkoff.edu.service.parser;
-
-import ru.tinkoff.edu.enums.Site;
-import ru.tinkoff.edu.dto.LinkData;
-import ru.tinkoff.edu.dto.LinkDataStackOverflow;
+package ru.tinkoff.edu.linkParser.service.parser;
 
 import java.net.URI;
+import ru.tinkoff.edu.linkParser.dto.LinkData;
+import ru.tinkoff.edu.linkParser.dto.LinkDataStackOverflow;
+import ru.tinkoff.edu.linkParser.enums.Site;
 
 final class LinkParserStackOverflow extends LinkParser {
 
@@ -12,9 +11,9 @@ final class LinkParserStackOverflow extends LinkParser {
     public LinkData parseUrl(URI url) {
         if (url.getHost().equals(Site.STACK_OVERFLOW.getHost())) {
             String[] stackOverflowPath = url.getPath().replaceFirst("/", "").split("/");
-            String QUESTIONS_PATH = "questions";
+            String questionsPath = "questions";
 
-            if (stackOverflowPath.length != 0 && stackOverflowPath[0].equals(QUESTIONS_PATH)) {
+            if (stackOverflowPath.length != 0 && stackOverflowPath[0].equals(questionsPath)) {
                 return new LinkDataStackOverflow(
                         url,
                         Site.STACK_OVERFLOW,

@@ -2,23 +2,21 @@ package ru.tinkoff.edu.bot.handler;
 
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.tinkoff.edu.bot.client.ScrapperClient;
-import ru.tinkoff.edu.bot.dto.scrapper.request.AddLinkRequest;
 import ru.tinkoff.edu.bot.dto.scrapper.request.RemoveLinkRequest;
 import ru.tinkoff.edu.bot.dto.scrapper.response.LinkResponse;
 import ru.tinkoff.edu.bot.tg.Bot;
 import ru.tinkoff.edu.bot.tg.SendMessageAdapter;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 @Component
 @Slf4j
-public class UntrackCommandHandler extends MessageHandler{
+public class UntrackCommandHandler extends MessageHandler {
 
     private final ScrapperClient scrapperClient;
 
@@ -32,10 +30,10 @@ public class UntrackCommandHandler extends MessageHandler{
         Message message = update.message();
         List<String> stringUri = new ArrayList<>(List.of(message.text().split(" ")));
         String allowedMessage = stringUri.remove(0);
-        if (allowedMessage.equals("/untrack")) {
+        if ("/untrack".equals(allowedMessage)) {
             if (stringUri.size() == 0) {
-                String messageForGetLink = "Чтобы удалить ссылку отправьте команду /untrack с нужными ссылками, " +
-                        "разделенными пробелами.";
+                String messageForGetLink = "Чтобы удалить ссылку отправьте команду "
+                    + "/untrack с нужными ссылками, разделенными пробелами.";
                 bot.send(new SendMessageAdapter(message.chat().id(), messageForGetLink)
                         .getSendMessage());
             } else {

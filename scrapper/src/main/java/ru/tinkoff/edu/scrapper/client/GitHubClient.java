@@ -1,12 +1,11 @@
 package ru.tinkoff.edu.scrapper.client;
 
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.tinkoff.edu.scrapper.dto.response.GitHubRepositoryInfoResponse;
-
-import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor

@@ -2,9 +2,9 @@ package ru.tinkoff.edu.scrapper.service.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.tinkoff.edu.dto.LinkData;
-import ru.tinkoff.edu.dto.LinkDataGithub;
-import ru.tinkoff.edu.enums.Site;
+import ru.tinkoff.edu.linkParser.dto.LinkData;
+import ru.tinkoff.edu.linkParser.dto.LinkDataGithub;
+import ru.tinkoff.edu.linkParser.enums.Site;
 import ru.tinkoff.edu.scrapper.client.GitHubClient;
 import ru.tinkoff.edu.scrapper.dto.response.GitHubRepositoryInfoResponse;
 

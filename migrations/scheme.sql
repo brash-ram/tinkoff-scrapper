@@ -4,7 +4,7 @@ CREATE SEQUENCE IF NOT EXISTS chats_id_seq start 1;
 
 CREATE TABLE IF NOT EXISTS chats(
     id BIGINT NOT NULL DEFAULT nextval('chats_id_seq') PRIMARY KEY,
-    chat_id BIGINT NOT NULL
+    chat_id BIGINT NOT NULL UNIQUE
     );
 
 CREATE TABLE IF NOT EXISTS links(

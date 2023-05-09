@@ -1,21 +1,20 @@
 package ru.tinkoff.edu.scrapper.service.jpaImpl;
 
+import java.net.URI;
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import ru.tinkoff.edu.scrapper.data.entity.Chat;
+import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.scrapper.data.entity.Link;
 import ru.tinkoff.edu.scrapper.data.respository.jpa.JpaLinkRepository;
 import ru.tinkoff.edu.scrapper.service.ChatService;
 import ru.tinkoff.edu.scrapper.service.LinkService;
 
-import java.net.URI;
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.Optional;
-
 
 @RequiredArgsConstructor
 public class JpaLinkService implements LinkService {
-    
+
     private final JpaLinkRepository jpaLinkRepository;
     private final ChatService chatService;
 
@@ -30,10 +29,11 @@ public class JpaLinkService implements LinkService {
     }
 
     @Override
+    @Transactional
     public void updateTimeUpdate(Long linkId, Timestamp timeUpdate) {
         jpaLinkRepository.save(
                 jpaLinkRepository.findById(linkId)
-                        .orElseThrow(() -> new RuntimeException("Link with id [" + linkId.toString() + "] not found"))
+                        .orElseThrow(() -> new RuntimeException("Link with id [" + linkId + "] not found"))
                         .setLastUpdate(timeUpdate)
         );
     }
@@ -48,6 +48,7 @@ public class JpaLinkService implements LinkService {
     }
 
     @Override
+    @Transactional
     public Link remove(long tgChatId, URI url) {
         Optional<Link> resultLink = chatService.getByChatId(tgChatId).getLinks()
                 .stream()

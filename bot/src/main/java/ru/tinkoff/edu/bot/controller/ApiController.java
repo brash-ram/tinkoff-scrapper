@@ -32,7 +32,10 @@ public interface ApiController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Обновление обработано"),
                     @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
+                        @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ApiErrorResponse.class
+                            ))
                     })
             }
     )
@@ -43,7 +46,7 @@ public interface ApiController {
             consumes = { "application/json" }
     )
     ResponseEntity<Void> updatesPost(
-            @Parameter(name = "LinkUpdate", description = "", required = true) @Valid @RequestBody LinkUpdate linkUpdate
+            @Parameter(name = "LinkUpdate", required = true) @Valid @RequestBody LinkUpdate linkUpdate
     );
 
 }

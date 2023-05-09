@@ -1,7 +1,7 @@
 package ru.tinkoff.edu.scrapper.service.api;
 
 
-import ru.tinkoff.edu.dto.LinkData;
+import ru.tinkoff.edu.linkParser.dto.LinkData;
 
 public abstract class ApiService {
     protected ApiService nextService;

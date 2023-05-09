@@ -1,31 +1,36 @@
 package ru.tinkoff.edu.scrapper.repository.jdbc;
 
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.scrapper.data.entity.Chat;
 import ru.tinkoff.edu.scrapper.data.respository.ChatRepository;
 import ru.tinkoff.edu.scrapper.data.respository.jdbcImpl.ChatRepositoryJdbcImpl;
 import ru.tinkoff.edu.scrapper.environment.IntegrationEnvironment;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-@SpringBootTest(classes = {IntegrationEnvironment.IntegrationEnvironmentConfiguration.class, ChatRepositoryJdbcImpl.class})
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = {
+        IntegrationEnvironment.IntegrationEnvironmentConfiguration.class,
+        ChatRepositoryJdbcImpl.class
+})
 public class ChatRepositoryJdbcImplTests {
-    
-    private static Chat TEST_CHAt;
+
+    private static Chat testChat;
 
     @Autowired
     private ChatRepository chatRepositoryJdbcImpl;
 
     @BeforeAll
     public static void setTestChat() {
-        TEST_CHAt = new Chat()
+        testChat = new Chat()
                 .setChatId(1L);
     }
 
@@ -33,7 +38,7 @@ public class ChatRepositoryJdbcImplTests {
     @Transactional
     @Rollback
     public void saveTest() {
-        Chat chat = chatRepositoryJdbcImpl.save(TEST_CHAt);
+        Chat chat = chatRepositoryJdbcImpl.save(testChat);
         assertNotNull(chat.getId());
     }
 
@@ -41,7 +46,7 @@ public class ChatRepositoryJdbcImplTests {
     @Transactional
     @Rollback
     public void findByIdTest() {
-        Chat chat = chatRepositoryJdbcImpl.save(TEST_CHAt);
+        Chat chat = chatRepositoryJdbcImpl.save(testChat);
         Optional<Chat> findChat = chatRepositoryJdbcImpl.findById(chat.getId());
         assertTrue(findChat.isPresent());
         Chat presentChat = findChat.get();
@@ -53,7 +58,7 @@ public class ChatRepositoryJdbcImplTests {
     @Transactional
     @Rollback
     public void findByChatIdTest() {
-        chatRepositoryJdbcImpl.save(TEST_CHAt);
+        chatRepositoryJdbcImpl.save(testChat);
         Chat chat = chatRepositoryJdbcImpl.findByChatId(1L);
         assertNotNull(chat);
     }
@@ -62,18 +67,19 @@ public class ChatRepositoryJdbcImplTests {
     @Transactional
     @Rollback
     public void removeTest() {
-        Chat chat = chatRepositoryJdbcImpl.save(TEST_CHAt);
+        Chat chat = chatRepositoryJdbcImpl.save(testChat);
         chatRepositoryJdbcImpl.remove(chat.getId());
-        assertEquals(chatRepositoryJdbcImpl.findAll().size(), 0);
+        assertEquals(0, chatRepositoryJdbcImpl.findAll().size());
     }
 
     @Test
     @Transactional
     @Rollback
     public void findAll() {
-        chatRepositoryJdbcImpl.save(TEST_CHAt);
-        chatRepositoryJdbcImpl.save(TEST_CHAt);
+        chatRepositoryJdbcImpl.save(testChat);
+        Chat chat = new Chat().setChatId(2L);
+        chatRepositoryJdbcImpl.save(chat);
 
-        assertEquals(chatRepositoryJdbcImpl.findAll().size(), 2);
+        assertEquals(2, chatRepositoryJdbcImpl.findAll().size());
     }
 }

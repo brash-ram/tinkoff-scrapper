@@ -1,12 +1,11 @@
-package ru.tinkoff.edu.service.parser;
-
-import ru.tinkoff.edu.dto.LinkData;
-import ru.tinkoff.edu.dto.LinkDataGithub;
-import ru.tinkoff.edu.enums.Site;
+package ru.tinkoff.edu.linkParser.service.parser;
 
 import java.net.URI;
+import ru.tinkoff.edu.linkParser.dto.LinkData;
+import ru.tinkoff.edu.linkParser.dto.LinkDataGithub;
+import ru.tinkoff.edu.linkParser.enums.Site;
 
-final class LinkParserGitHub extends LinkParser{
+final class LinkParserGitHub extends LinkParser {
 
     @Override
     public LinkData parseUrl(URI url) {

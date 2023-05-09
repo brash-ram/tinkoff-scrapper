@@ -5,6 +5,47 @@ networks:
 
 services:
 
+    bot:
+        container_name: bot_container
+        image: bot_image
+        build:
+            context: .
+            dockerfile: ./bot/Dockerfile
+        ports:
+            - "8080:8080"
+        environment:
+            BOT_TOKEN: ${BOT_TOKEN}
+            SCRAPPER_URL: "http://scrapper:8081"
+            RABBIT_HOST: "rabbitmq"
+        networks:
+            - backend
+        deploy:
+            restart_policy:
+                delay: 5s
+                condition: on-failure
+                max_attempts: 5
+
+    scrapper:
+        container_name: scrapper_container
+        image: scrapper_image
+        build:
+            context: .
+            dockerfile: ./scrapper/Dockerfile
+        ports:
+            - "8081:8081"
+        environment:
+            GITHUB_TOKEN: ${GITHUB_TOKEN}
+            DB_URL: "jdbc:postgresql://postgres:5432/scrapper"
+            BOT_URL: "http://bot:8080"
+            RABBIT_HOST: "rabbitmq"
+        networks:
+            - backend
+        deploy:
+            restart_policy:
+                delay: 5s
+                condition: on-failure
+                max_attempts: 5
+
     postgres:
         container_name: postgres_container
         image: postgres
@@ -15,10 +56,10 @@ services:
         volumes:
             - ./volumes/2. Init Database:/docker-entrypoint-initdb.d
             - ./volumes/postgres-data:/var/lib/postgresql/data
-        ports:
-            - "5434:5432"
         networks:
             - backend
+        ports:
+            - "5434:5432"
         restart: unless-stopped
         healthcheck:
             test: [ "CMD-SHELL", "pg_isready -U postgres" ]
@@ -55,6 +96,5 @@ services:
         ports:
             - "15672:15672"
             - "5672:5672"
-
         networks:
             - backend

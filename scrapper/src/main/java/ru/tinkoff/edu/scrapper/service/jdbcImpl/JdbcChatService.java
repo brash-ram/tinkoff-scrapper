@@ -1,7 +1,6 @@
 package ru.tinkoff.edu.scrapper.service.jdbcImpl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import ru.tinkoff.edu.scrapper.data.entity.Chat;
 import ru.tinkoff.edu.scrapper.data.respository.ChatRepository;
 import ru.tinkoff.edu.scrapper.service.ChatService;

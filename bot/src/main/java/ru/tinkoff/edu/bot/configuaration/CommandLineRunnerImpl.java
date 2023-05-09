@@ -19,7 +19,11 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     public void run(String... args) { //решаю проблему циклической зависимости
         bot.getTelegramBot().setUpdatesListener(updates -> {
             for (Update update : updates) {
-                messageHandler.handleMessage(update);
+                try {
+                    messageHandler.handleMessage(update);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
         });

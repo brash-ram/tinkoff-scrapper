@@ -7,7 +7,7 @@ rabbit:
     exchange: scrapper-exchange
 
 baseUrl:
-    scrapper: http://localhost:8081
+    scrapper: ${SCRAPPER_URL}
 
 default:
     timeout: 5
@@ -17,7 +17,7 @@ server:
 
 spring:
     rabbitmq:
-        host: localhost
+        host: ${RABBIT_HOST}
         username: user
         password: qwerty
         port: 5672

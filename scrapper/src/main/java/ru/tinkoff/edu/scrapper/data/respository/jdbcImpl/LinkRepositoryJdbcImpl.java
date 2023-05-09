@@ -1,55 +1,45 @@
 package ru.tinkoff.edu.scrapper.data.respository.jdbcImpl;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import ru.tinkoff.edu.scrapper.data.entity.Chat;
-import ru.tinkoff.edu.scrapper.data.entity.Link;
-import ru.tinkoff.edu.scrapper.data.respository.LinkRepository;
-import ru.tinkoff.edu.scrapper.utils.JdbcMapper;
-
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.transaction.annotation.Transactional;
+import ru.tinkoff.edu.scrapper.data.entity.Link;
+import ru.tinkoff.edu.scrapper.data.respository.LinkRepository;
+import ru.tinkoff.edu.scrapper.utils.JdbcMapper;
 
 
 @RequiredArgsConstructor
 @Transactional
 public class LinkRepositoryJdbcImpl implements LinkRepository {
 
-    private final String INSERT = "INSERT INTO links (url, chat, last_update) VALUES (?, ?, ?)";
-
-    private final String DELETE = "DELETE FROM links WHERE id = ?";
-
-    private final String FIND_ALL = "SELECT c.id id, c.chat_id chat_id, l.id link_id, l.url url, l.last_update last_update" +
-            " FROM chats AS c RIGHT JOIN links AS l ON c.id = l.chat";
-
-    private final String FIND_ALL_BEFORE = "SELECT c.id id, c.chat_id chat_id, l.id link_id, l.url url, l.last_update last_update" +
-            " FROM chats AS c RIGHT JOIN links AS l ON c.id = l.chat" +
-            " WHERE l.last_update < ?";
-
-    private final String UPDATE_LAST_UPDATE = "UPDATE links" +
-            " SET last_update = ?" +
-            " WHERE id = ?";
+    private final String insert = "INSERT INTO links (url, chat, last_update) VALUES (?, ?, ?)";
 
     private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void updateLastUpdate(Long id, Timestamp timestamp) {
-        jdbcTemplate.update(UPDATE_LAST_UPDATE, timestamp, id);
+        String updateLastUpdate = "UPDATE links" +
+            " SET last_update = ?" +
+            " WHERE id = ?";
+        jdbcTemplate.update(updateLastUpdate, timestamp, id);
     }
 
     @Override
     public List<Link> findAllBefore(Timestamp borderTime) {
-        return jdbcTemplate.query(FIND_ALL_BEFORE, this::mapListLinks, borderTime);
+        String findAllBefore =
+            "SELECT c.id id, c.chat_id chat_id, l.id link_id, l.url url, l.last_update last_update" +
+                " FROM chats AS c RIGHT JOIN links AS l ON c.id = l.chat" +
+                " WHERE l.last_update < ?";
+        return jdbcTemplate.query(findAllBefore, this::mapListLinks, borderTime);
     }
 
     @Override
@@ -58,7 +48,7 @@ public class LinkRepositoryJdbcImpl implements LinkRepository {
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection
-                    .prepareStatement(INSERT, new String[] {"id"});
+                    .prepareStatement(insert, new String[] {"id"});
             ps.setString(1, link.getUrl().toString());
             ps.setObject(2, link.getChat() != null ? link.getChat().getId() : null);
             ps.setTimestamp(3, link.getLastUpdate());
@@ -75,12 +65,15 @@ public class LinkRepositoryJdbcImpl implements LinkRepository {
 
     @Override
     public void remove(Long id) {
-        jdbcTemplate.update(DELETE, id);
+        String delete = "DELETE FROM links WHERE id = ?";
+        jdbcTemplate.update(delete, id);
     }
 
     @Override
     public List<Link> findAll() {
-        return jdbcTemplate.query(FIND_ALL, this::mapListLinks);
+        String findAll = "SELECT c.id id, c.chat_id chat_id, l.id link_id, l.url url, l.last_update last_update" +
+            " FROM chats AS c RIGHT JOIN links AS l ON c.id = l.chat";
+        return jdbcTemplate.query(findAll, this::mapListLinks);
     }
 
     private List<Link> mapListLinks(ResultSet rs) {

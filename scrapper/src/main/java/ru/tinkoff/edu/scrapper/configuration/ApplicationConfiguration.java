@@ -1,5 +1,6 @@
 package ru.tinkoff.edu.scrapper.configuration;
 
+import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -7,11 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
-import ru.tinkoff.edu.LinkParserApplication;
-import ru.tinkoff.edu.service.LinkParseService;
-import ru.tinkoff.edu.service.parser.ParserConfiguration;
-
-import javax.sql.DataSource;
+import ru.tinkoff.edu.linkParser.service.LinkParseService;
+import ru.tinkoff.edu.linkParser.service.parser.ParserConfiguration;
 
 @Configuration
 @Import({LinkParseService.class, ParserConfiguration.class})
