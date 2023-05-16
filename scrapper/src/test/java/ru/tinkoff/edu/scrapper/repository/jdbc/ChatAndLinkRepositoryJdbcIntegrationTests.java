@@ -1,5 +1,10 @@
 package ru.tinkoff.edu.scrapper.repository.jdbc;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +18,8 @@ import ru.tinkoff.edu.scrapper.data.respository.LinkRepository;
 import ru.tinkoff.edu.scrapper.data.respository.jdbcImpl.ChatRepositoryJdbcImpl;
 import ru.tinkoff.edu.scrapper.data.respository.jdbcImpl.LinkRepositoryJdbcImpl;
 import ru.tinkoff.edu.scrapper.environment.IntegrationEnvironment;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {
         IntegrationEnvironment.IntegrationEnvironmentConfiguration.class,
@@ -29,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 public class ChatAndLinkRepositoryJdbcIntegrationTests {
 
-    private static Chat TEST_CHAt;
-    private static Link TEST_LINK;
+    private static Chat testChat;
+    private static Link testLink;
 
     @Autowired
     private ChatRepository chatRepositoryJdbcImpl;
@@ -40,22 +39,22 @@ public class ChatAndLinkRepositoryJdbcIntegrationTests {
 
     @BeforeAll
     public static void setTestData() throws URISyntaxException {
-        TEST_CHAt = new Chat()
+        testChat = new Chat()
                 .setChatId(1L);
-        TEST_LINK = new Link()
+        testLink = new Link()
                 .setUrl(new URI("http://localhost:8080"))
                 .setLastUpdate(new Timestamp(System.currentTimeMillis()))
-                .setChat(TEST_CHAt);
+                .setChat(testChat);
     }
 
     @Test
     @Transactional
     @Rollback
     public void saveChatAndLinkTest() {
-        chatRepositoryJdbcImpl.save(TEST_CHAt);
-        linkRepository.save(TEST_LINK);
+        chatRepositoryJdbcImpl.save(testChat);
+        linkRepository.save(testLink);
 
-        Optional<Chat> savingChat = chatRepositoryJdbcImpl.findById(TEST_CHAt.getId());
+        Optional<Chat> savingChat = chatRepositoryJdbcImpl.findById(testChat.getId());
 
         assertTrue(savingChat.isPresent());
         assertEquals(savingChat.get().getLinks().size(), 1);
@@ -66,18 +65,18 @@ public class ChatAndLinkRepositoryJdbcIntegrationTests {
     @Transactional
     @Rollback
     public void cascadeDeleteChatAndLinkTest() {
-        chatRepositoryJdbcImpl.save(TEST_CHAt);
-        linkRepository.save(TEST_LINK);
-        linkRepository.save(TEST_LINK);
+        chatRepositoryJdbcImpl.save(testChat);
+        linkRepository.save(testLink);
+        linkRepository.save(testLink);
 
-        Optional<Chat> savingChat = chatRepositoryJdbcImpl.findById(TEST_CHAt.getId());
+        Optional<Chat> savingChat = chatRepositoryJdbcImpl.findById(testChat.getId());
 
         assertTrue(savingChat.isPresent());
         assertEquals(savingChat.get().getLinks().size(), 2);
 
         chatRepositoryJdbcImpl.remove(savingChat.get().getId());
 
-        savingChat = chatRepositoryJdbcImpl.findById(TEST_CHAt.getId());
+        savingChat = chatRepositoryJdbcImpl.findById(testChat.getId());
         List<Link> links = linkRepository.findAll();
 
         assertTrue(links.isEmpty());

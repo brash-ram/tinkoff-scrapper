@@ -1,7 +1,6 @@
 package ru.tinkoff.edu.bot.dto.scrapper.response;
 
 import jakarta.validation.Valid;
-
 import java.util.List;
 
 /**

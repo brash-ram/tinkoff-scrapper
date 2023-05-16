@@ -1,5 +1,8 @@
 package ru.tinkoff.edu.scrapper.repository.jpa;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.sql.Timestamp;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,26 +15,22 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.scrapper.data.entity.Link;
 import ru.tinkoff.edu.scrapper.data.respository.jpa.JpaLinkRepository;
 import ru.tinkoff.edu.scrapper.environment.IntegrationEnvironment;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.sql.Timestamp;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 @DataJpaTest(excludeAutoConfiguration = LiquibaseAutoConfiguration.class)
 @Import(IntegrationEnvironment.JpaIntegrationEnvironmentConfiguration.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class LinkRepositoryJpaImplTests  {
-    private static Link TEST_LINK;
+    private static Link testLink;
 
     @Autowired
     private JpaLinkRepository jpaLinkRepository;
 
     @BeforeAll
     public static void setTestLink() throws URISyntaxException {
-        TEST_LINK = new Link()
+        testLink = new Link()
                 .setUrl(new URI("http://localhost:8080"))
                 .setLastUpdate(new Timestamp(System.currentTimeMillis()));
     }
@@ -40,7 +39,7 @@ public class LinkRepositoryJpaImplTests  {
     @Transactional
     @Rollback
     public void addTest() {
-        Link link = jpaLinkRepository.save(TEST_LINK);
+        Link link = jpaLinkRepository.save(testLink);
         assertNotNull(link.getId());
     }
 
@@ -48,7 +47,7 @@ public class LinkRepositoryJpaImplTests  {
     @Transactional
     @Rollback
     public void removeTest() {
-        Link link = jpaLinkRepository.save(TEST_LINK);
+        Link link = jpaLinkRepository.save(testLink);
         jpaLinkRepository.delete(link);
         assertEquals(jpaLinkRepository.findAll().size(), 0);
     }
@@ -57,8 +56,8 @@ public class LinkRepositoryJpaImplTests  {
     @Transactional
     @Rollback
     public void findAll() {
-        jpaLinkRepository.save(TEST_LINK);
-        jpaLinkRepository.save(TEST_LINK);
+        jpaLinkRepository.save(testLink);
+        jpaLinkRepository.save(testLink);
 
         assertEquals(jpaLinkRepository.findAll().size(), 2);
     }
@@ -67,7 +66,7 @@ public class LinkRepositoryJpaImplTests  {
     @Transactional
     @Rollback
     public void updateLastUpdateAll() {
-        Link link = jpaLinkRepository.save(TEST_LINK);
+        Link link = jpaLinkRepository.save(testLink);
         Timestamp timestamp = new Timestamp(100000000L);
         jpaLinkRepository.save(link.setLastUpdate(timestamp));
         assertEquals(jpaLinkRepository.findAll().size(), 1);

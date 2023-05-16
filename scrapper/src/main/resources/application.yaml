@@ -1,7 +1,7 @@
 app:
     test: test
     scheduler:
-        interval: 30000
+        interval: ${SCHEDULER_INTERVAL}
     database-access-type: jpa
     useQueue: true
 
@@ -11,7 +11,7 @@ rabbit:
 
 
 scheduler:
-    linkUpdate: 60000
+    linkUpdate: ${TIME_UPDATE}
 api:
     github:
         token: ${GITHUB_TOKEN}
@@ -19,7 +19,7 @@ api:
 baseUrl:
     github: https://api.github.com
     stackOverflow: https://api.stackexchange.com/2.3
-    bot: http://localhost:8080
+    bot: ${BOT_URL}
 
 default:
     timeout: 30
@@ -29,6 +29,35 @@ springdoc:
         path: /swagger-ui.html
 server:
     port: 8081
+
+management:
+    metrics:
+        tags:
+            application: ${spring.application.name}
+    server:
+        port: 8091
+    endpoints:
+        web:
+            base-path: /
+            path-mapping:
+                prometheus: metrics
+            exposure:
+                include: "*"
+        enabled-by-default: false
+
+    endpoint:
+        info:
+            enabled: true
+        health:
+            enabled: true
+        metrics:
+            enabled: true
+        prometheus:
+            enabled: true
+    prometheus:
+        metrics:
+            export:
+                enabled: true
 
 spring:
     jpa:
@@ -47,13 +76,15 @@ spring:
         hibernate:
             ddl-auto: none
     datasource:
-        url: jdbc:postgresql://localhost:5434/scrapper
+        url: ${DB_URL}
         username: postgres
         password: qwerty
         driver-class-name: org.postgresql.Driver
 
     rabbitmq:
-        host: localhost
+        host: ${RABBIT_HOST}
         username: user
         password: qwerty
         port: 5672
+    application:
+        name: scrapper

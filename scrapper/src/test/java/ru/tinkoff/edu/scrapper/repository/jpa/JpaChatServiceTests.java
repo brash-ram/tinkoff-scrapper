@@ -10,32 +10,37 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.scrapper.data.entity.Chat;
+import ru.tinkoff.edu.scrapper.data.respository.jpa.JpaChatRepository;
 import ru.tinkoff.edu.scrapper.environment.IntegrationEnvironment;
 import ru.tinkoff.edu.scrapper.service.ChatService;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DataJpaTest(excludeAutoConfiguration = LiquibaseAutoConfiguration.class)
 @Import(IntegrationEnvironment.JpaIntegrationEnvironmentConfiguration.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class JpaChatServiceTests {
 
-    private static Chat TEST_CHAT;
-
-    @BeforeEach
-    public void setTestChat() {
-        TEST_CHAT = new Chat()
-                .setChatId(1L);
-    }
+    private static Chat testChat;
 
     @Autowired
     private ChatService jpaChatService;
+
+    @Autowired
+    private JpaChatRepository jpaChatRepository;
+
+    @BeforeEach
+    public void setTestChat() {
+        testChat = new Chat()
+                .setChatId(1L);
+    }
 
     @Test
     @Transactional
     @Rollback
     public void registerTest() {
-        Chat registeredChat = jpaChatService.register(TEST_CHAT.getChatId());
+        Chat registeredChat = jpaChatService.register(testChat.getChatId());
         assertNotNull(jpaChatService.getById(registeredChat.getId()));
     }
 
@@ -43,7 +48,7 @@ public class JpaChatServiceTests {
     @Transactional
     @Rollback
     public void unregisterTest() {
-        Chat registeredChat = jpaChatService.register(TEST_CHAT.getChatId());
+        Chat registeredChat = jpaChatService.register(testChat.getChatId());
         jpaChatService.unregister(registeredChat.getChatId());
         assertNull(jpaChatService.getById(registeredChat.getId()));
     }
@@ -53,7 +58,7 @@ public class JpaChatServiceTests {
     @Transactional
     @Rollback
     public void getByChatIdTest() {
-        Chat registeredChat = jpaChatService.register(TEST_CHAT.getChatId());
+        Chat registeredChat = jpaChatService.register(testChat.getChatId());
         Chat savedChat = jpaChatService.getByChatId(registeredChat.getChatId());
         assertEquals(registeredChat, savedChat);
     }

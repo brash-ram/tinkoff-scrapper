@@ -1,10 +1,8 @@
 package ru.tinkoff.edu.scrapper.data.respository;
 
-import org.springframework.stereotype.Repository;
-import ru.tinkoff.edu.scrapper.data.entity.Link;
-
 import java.sql.Timestamp;
 import java.util.List;
+import ru.tinkoff.edu.scrapper.data.entity.Link;
 
 public interface LinkRepository {
     Link save(Link link);

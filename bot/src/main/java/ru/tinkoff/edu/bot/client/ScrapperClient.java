@@ -1,5 +1,7 @@
 package ru.tinkoff.edu.bot.client;
 
+import java.time.Duration;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,9 +13,6 @@ import ru.tinkoff.edu.bot.dto.scrapper.request.AddLinkRequest;
 import ru.tinkoff.edu.bot.dto.scrapper.request.RemoveLinkRequest;
 import ru.tinkoff.edu.bot.dto.scrapper.response.LinkResponse;
 import ru.tinkoff.edu.bot.dto.scrapper.response.ListLinksResponse;
-
-import java.time.Duration;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor

@@ -1,11 +1,10 @@
-package ru.tinkoff.edu.service;
-
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import ru.tinkoff.edu.dto.LinkData;
-import ru.tinkoff.edu.service.parser.LinkParser;
+package ru.tinkoff.edu.linkParser.service;
 
 import java.net.URI;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import ru.tinkoff.edu.linkParser.dto.LinkData;
+import ru.tinkoff.edu.linkParser.service.parser.LinkParser;
 
 @Service
 @RequiredArgsConstructor

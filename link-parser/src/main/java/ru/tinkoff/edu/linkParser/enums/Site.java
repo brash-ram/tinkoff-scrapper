@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.enums;
+package ru.tinkoff.edu.linkParser.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

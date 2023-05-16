@@ -1,6 +1,8 @@
 package ru.tinkoff.edu.scrapper.repository.jpa;
 
-import org.junit.jupiter.api.BeforeAll;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.sql.Timestamp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,38 +14,33 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.scrapper.data.entity.Chat;
 import ru.tinkoff.edu.scrapper.data.entity.Link;
-import ru.tinkoff.edu.scrapper.data.respository.jpa.JpaLinkRepository;
 import ru.tinkoff.edu.scrapper.environment.IntegrationEnvironment;
 import ru.tinkoff.edu.scrapper.service.ChatService;
 import ru.tinkoff.edu.scrapper.service.LinkService;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.sql.Timestamp;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest(excludeAutoConfiguration = LiquibaseAutoConfiguration.class)
 @Import(IntegrationEnvironment.JpaIntegrationEnvironmentConfiguration.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class JpaLinkServiceTests {
-    
+
     @Autowired
     private LinkService jpaLinkService;
 
     @Autowired
     private ChatService jpaChatService;
 
-    private static Link TEST_LINK;
+    private static Link testLink;
 
-    private static Chat TEST_CHAT;
+    private static Chat testChat;
 
     @BeforeEach
     public void setTestLink() throws URISyntaxException {
-        TEST_LINK = new Link()
+        testLink = new Link()
                 .setUrl(new URI("http://localhost:8080"))
                 .setLastUpdate(new Timestamp(400000L));
-        TEST_CHAT = new Chat()
+        testChat = new Chat()
                 .setChatId(1L);
     }
 
@@ -51,17 +48,17 @@ public class JpaLinkServiceTests {
     @Transactional
     @Rollback
     public void updateTimeUpdateTest() {
-        Link link = jpaLinkService.add(TEST_CHAT.getChatId(), TEST_LINK.getUrl());
-        jpaLinkService.updateTimeUpdate(link.getId(), TEST_LINK.getLastUpdate());
-        assertEquals(jpaLinkService.getAll().get(0).getLastUpdate(), TEST_LINK.getLastUpdate());
+        Link link = jpaLinkService.add(testChat.getChatId(), testLink.getUrl());
+        jpaLinkService.updateTimeUpdate(link.getId(), testLink.getLastUpdate());
+        assertEquals(jpaLinkService.getAll().get(0).getLastUpdate(), testLink.getLastUpdate());
     }
 
     @Test
     @Transactional
     @Rollback
     public void addTest() {
-        jpaChatService.register(TEST_CHAT.getChatId());
-        Link link = jpaLinkService.add(TEST_CHAT.getChatId(), TEST_LINK.getUrl());
+        jpaChatService.register(testChat.getChatId());
+        Link link = jpaLinkService.add(testChat.getChatId(), testLink.getUrl());
         assertNotNull(link.getId());
     }
 

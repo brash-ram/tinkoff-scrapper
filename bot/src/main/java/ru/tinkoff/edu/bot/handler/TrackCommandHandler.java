@@ -2,6 +2,10 @@ package ru.tinkoff.edu.bot.handler;
 
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
@@ -10,17 +14,12 @@ import ru.tinkoff.edu.bot.dto.scrapper.request.AddLinkRequest;
 import ru.tinkoff.edu.bot.dto.scrapper.response.LinkResponse;
 import ru.tinkoff.edu.bot.tg.Bot;
 import ru.tinkoff.edu.bot.tg.SendMessageAdapter;
-import ru.tinkoff.edu.service.LinkParseService;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import ru.tinkoff.edu.linkParser.service.LinkParseService;
 
 @Component
 @ComponentScan("ru.tinkoff.edu.linkParser.service")
 @Slf4j
-public class TrackCommandHandler extends MessageHandler{
+public class TrackCommandHandler extends MessageHandler {
 
     private final ScrapperClient scrapperClient;
 
@@ -37,10 +36,10 @@ public class TrackCommandHandler extends MessageHandler{
         Message message = update.message();
         List<String> stringUri = new ArrayList<>(List.of(message.text().split(" ")));
         String allowedMessage = stringUri.remove(0);
-        if (allowedMessage.equals("/track")) {
+        if ("/track".equals(allowedMessage)) {
             if (stringUri.size() == 0) {
-                String messageForGetLink = "Чтобы добавить ссылку отправьте команду /track с нужными ссылками, " +
-                        "разделенными пробелами.";
+                String messageForGetLink = "Чтобы добавить ссылку отправьте команду "
+                    + "/track с нужными ссылками, разделенными пробелами.";
                 bot.send(new SendMessageAdapter(message.chat().id(), messageForGetLink)
                         .getSendMessage());
             } else {

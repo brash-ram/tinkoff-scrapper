@@ -1,11 +1,9 @@
 package ru.tinkoff.edu.scrapper.service;
 
-import ru.tinkoff.edu.scrapper.data.entity.Link;
-
 import java.net.URI;
 import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.List;
+import ru.tinkoff.edu.scrapper.data.entity.Link;
 
 public interface LinkService {
 

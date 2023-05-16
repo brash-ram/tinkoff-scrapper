@@ -7,7 +7,7 @@ rabbit:
     exchange: scrapper-exchange
 
 baseUrl:
-    scrapper: http://localhost:8081
+    scrapper: ${SCRAPPER_URL}
 
 default:
     timeout: 5
@@ -15,9 +15,40 @@ default:
 server:
     port: 8080
 
+management:
+    metrics:
+        tags:
+            application: ${spring.application.name}
+    server:
+        port: 8090
+    endpoints:
+        web:
+            base-path: /
+            path-mapping:
+                prometheus: metrics
+            exposure:
+                include: "*"
+        enabled-by-default: false
+
+    endpoint:
+        info:
+            enabled: true
+        health:
+            enabled: true
+        metrics:
+            enabled: true
+        prometheus:
+            enabled: true
+    prometheus:
+        metrics:
+            export:
+                enabled: true
+
 spring:
+    application:
+        name: bot
     rabbitmq:
-        host: localhost
+        host: ${RABBIT_HOST}
         username: user
         password: qwerty
         port: 5672

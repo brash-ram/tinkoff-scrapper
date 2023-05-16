@@ -11,7 +11,7 @@ public abstract class MessageHandler {
     @Autowired
     protected Bot bot;
 
-    protected final String DEFAULT_MASSAGE = "Команда обработана: ";
+    protected final String defaultMassage = "Команда обработана: ";
 
     public MessageHandler(Bot bot) {
         this.bot = bot;

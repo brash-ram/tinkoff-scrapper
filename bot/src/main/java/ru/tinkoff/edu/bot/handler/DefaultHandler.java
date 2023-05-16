@@ -6,7 +6,7 @@ import ru.tinkoff.edu.bot.tg.Bot;
 import ru.tinkoff.edu.bot.tg.SendMessageAdapter;
 
 @Component
-final class DefaultHandler extends MessageHandler{
+final class DefaultHandler extends MessageHandler {
 
     public DefaultHandler(Bot bot) {
         super(bot);

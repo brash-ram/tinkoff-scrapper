@@ -1,18 +1,16 @@
 package ru.tinkoff.edu.scrapper.service;
 
+import java.sql.Timestamp;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import ru.tinkoff.edu.dto.LinkData;
-import ru.tinkoff.edu.scrapper.client.BotClient;
+import ru.tinkoff.edu.linkParser.dto.LinkData;
+import ru.tinkoff.edu.linkParser.service.LinkParseService;
 import ru.tinkoff.edu.scrapper.data.entity.Link;
 import ru.tinkoff.edu.scrapper.dto.request.LinkUpdateRequest;
 import ru.tinkoff.edu.scrapper.service.api.ApiService;
-import ru.tinkoff.edu.service.LinkParseService;
-
-import java.sql.Timestamp;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +19,6 @@ public class LinkUpdaterScheduler {
     private final ApiService apiService;
     private final LinkService linkService;
     private final LinkParseService linkParseService;
-
     private final LinkUpdateService linkUpdateService;
 
     @Value("${scheduler.linkUpdate}")

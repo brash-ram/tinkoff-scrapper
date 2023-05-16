@@ -1,14 +1,13 @@
 package ru.tinkoff.edu.bot.dto;
 
 import jakarta.validation.Valid;
-
 import java.util.List;
 
 /**
  * ApiErrorResponse
  */
 
-public record ApiErrorResponse (
+public record ApiErrorResponse(
         String description,
 
         String code,

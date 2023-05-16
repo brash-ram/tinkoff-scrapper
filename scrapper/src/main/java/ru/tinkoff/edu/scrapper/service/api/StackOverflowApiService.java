@@ -2,9 +2,9 @@ package ru.tinkoff.edu.scrapper.service.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.tinkoff.edu.dto.LinkData;
-import ru.tinkoff.edu.dto.LinkDataStackOverflow;
-import ru.tinkoff.edu.enums.Site;
+import ru.tinkoff.edu.linkParser.dto.LinkData;
+import ru.tinkoff.edu.linkParser.dto.LinkDataStackOverflow;
+import ru.tinkoff.edu.linkParser.enums.Site;
 import ru.tinkoff.edu.scrapper.client.StackOverflowClient;
 import ru.tinkoff.edu.scrapper.dto.response.StackOverflowQuestionResponse;
 import ru.tinkoff.edu.scrapper.dto.stackoverflow.StackOverflowQuestion;

@@ -9,7 +9,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import ru.tinkoff.edu.scrapper.dto.request.AddLinkRequest;
 import ru.tinkoff.edu.scrapper.dto.request.RemoveLinkRequest;
 import ru.tinkoff.edu.scrapper.dto.response.ApiErrorResponse;
@@ -48,8 +52,8 @@ public interface ApiController {
             consumes = { "application/json" }
     )
     ResponseEntity<LinkResponse> linksDelete(
-            @NotNull @Parameter(name = "Tg-Chat-Id", description = "", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
-            @Parameter(name = "RemoveLinkRequest", description = "", required = true) @Valid @RequestBody RemoveLinkRequest removeLinkRequest
+            @NotNull @Parameter(name = "Tg-Chat-Id", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
+            @Parameter(name = "RemoveLinkRequest", required = true) @Valid @RequestBody RemoveLinkRequest removeLinkRequest
     );
 
 
@@ -78,7 +82,7 @@ public interface ApiController {
             produces = { "application/json" }
     )
     ResponseEntity<ListLinksResponse> linksGet(
-            @NotNull @Parameter(name = "Tg-Chat-Id", description = "", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "Tg-Chat-Id") Long tgChatId
+            @NotNull @Parameter(name = "Tg-Chat-Id", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "Tg-Chat-Id") Long tgChatId
     );
 
 
@@ -109,8 +113,14 @@ public interface ApiController {
             consumes = { "application/json" }
     )
     ResponseEntity<LinkResponse> linksPost(
-            @NotNull @Parameter(name = "Tg-Chat-Id", description = "", required = true, in = ParameterIn.HEADER) @RequestHeader(value = "Tg-Chat-Id", required = true) Long tgChatId,
-            @Parameter(name = "AddLinkRequest", description = "", required = true) @Valid @RequestBody AddLinkRequest addLinkRequest
+            @NotNull
+            @Parameter(name = "Tg-Chat-Id", required = true, in = ParameterIn.HEADER)
+            @RequestHeader(value = "Tg-Chat-Id")
+            Long tgChatId,
+            @Parameter(name = "AddLinkRequest", required = true)
+            @Valid
+            @RequestBody
+            AddLinkRequest addLinkRequest
     );
 
     /**
@@ -140,7 +150,7 @@ public interface ApiController {
             produces = { "application/json" }
     )
     ResponseEntity<Void> tgChatIdDelete(
-            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") Long id
+            @Parameter(name = "id", required = true, in = ParameterIn.PATH) @PathVariable("id") Long id
     );
 
 
@@ -167,6 +177,6 @@ public interface ApiController {
             produces = { "application/json" }
     )
     ResponseEntity<Void> tgChatIdPost(
-            @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") Long id
+            @Parameter(name = "id", required = true, in = ParameterIn.PATH) @PathVariable("id") Long id
     );
 }

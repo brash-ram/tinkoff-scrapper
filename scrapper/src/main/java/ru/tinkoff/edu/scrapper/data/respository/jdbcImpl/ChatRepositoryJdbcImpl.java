@@ -1,44 +1,40 @@
 package ru.tinkoff.edu.scrapper.data.respository.jdbcImpl;
 
+import java.net.URISyntaxException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.scrapper.data.entity.Chat;
 import ru.tinkoff.edu.scrapper.data.entity.Link;
 import ru.tinkoff.edu.scrapper.data.respository.ChatRepository;
 import ru.tinkoff.edu.scrapper.utils.JdbcMapper;
 
-import java.net.URISyntaxException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
-
 
 @RequiredArgsConstructor
 @Transactional
 public class ChatRepositoryJdbcImpl implements ChatRepository {
 
-    private final String INSERT = "INSERT INTO chats (chat_id) VALUES (?)";
-    private final String DELETE = "DELETE FROM chats WHERE id = ?";
-    private final String FIND_BY_ID = "SELECT c.id id, c.chat_id chat_id, l.id link_id, l.url url, l.last_update last_update" +
-            " FROM chats AS c LEFT JOIN links AS l ON c.id = l.chat" +
-            " WHERE c.id = ?";
-    private final String FIND_BY_CHAT_ID = "SELECT c.id id, c.chat_id chat_id, l.id link_id, l.url url, l.last_update last_update" +
-            " FROM chats AS c LEFT JOIN links AS l ON c.id = l.chat" +
-            " WHERE c.chat_id = ?";
-    private final String FIND_ALL = "SELECT c.id id, c.chat_id chat_id, l.id link_id, l.url url, l.last_update last_update" +
-            " FROM chats AS c LEFT JOIN links AS l ON c.id = l.chat";
+    private final String insert = "INSERT INTO chats (chat_id) VALUES (?)";
 
     private final JdbcTemplate jdbcTemplate;
 
     @Override
     public Chat findByChatId(Long tgChatId) {
-        return jdbcTemplate.query(FIND_BY_CHAT_ID, rs -> {
+        String findByChatId =
+            "SELECT c.id id, c.chat_id chat_id, l.id link_id, l.url url, l.last_update last_update" +
+                " FROM chats AS c LEFT JOIN links AS l ON c.id = l.chat" +
+                " WHERE c.chat_id = ?";
+        return jdbcTemplate.query(findByChatId, rs -> {
             List<Chat> chats = mapListChats(rs);
             return chats.isEmpty() ? null : chats.get(0);
         }, tgChatId);
@@ -46,7 +42,10 @@ public class ChatRepositoryJdbcImpl implements ChatRepository {
 
     @Override
     public Optional<Chat> findById(Long id) {
-        return Optional.ofNullable(jdbcTemplate.query(FIND_BY_ID, rs -> {
+        String findById = "SELECT c.id id, c.chat_id chat_id, l.id link_id, l.url url, l.last_update last_update" +
+            " FROM chats AS c LEFT JOIN links AS l ON c.id = l.chat" +
+            " WHERE c.id = ?";
+        return Optional.ofNullable(jdbcTemplate.query(findById, rs -> {
             List<Chat> chats = mapListChats(rs);
             return chats.isEmpty() ? null : chats.get(0);
         }, id));
@@ -58,7 +57,7 @@ public class ChatRepositoryJdbcImpl implements ChatRepository {
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection
-                    .prepareStatement(INSERT, new String[] {"id"});
+                    .prepareStatement(insert, new String[] {"id"});
             ps.setLong(1, chat.getChatId());
             return ps;
         }, keyHolder);
@@ -72,12 +71,15 @@ public class ChatRepositoryJdbcImpl implements ChatRepository {
 
     @Override
     public void remove(Long id) {
-        jdbcTemplate.update(DELETE, id);
+        String delete = "DELETE FROM chats WHERE id = ?";
+        jdbcTemplate.update(delete, id);
     }
 
     @Override
     public List<Chat> findAll() {
-        return jdbcTemplate.query(FIND_ALL, this::mapListChats);
+        String findAll = "SELECT c.id id, c.chat_id chat_id, l.id link_id, l.url url, l.last_update last_update" +
+            " FROM chats AS c LEFT JOIN links AS l ON c.id = l.chat";
+        return jdbcTemplate.query(findAll, this::mapListChats);
     }
 
     private List<Chat> mapListChats(ResultSet rs) throws SQLException {

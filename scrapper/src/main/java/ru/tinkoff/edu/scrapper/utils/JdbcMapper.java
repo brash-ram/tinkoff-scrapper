@@ -1,13 +1,12 @@
 package ru.tinkoff.edu.scrapper.utils;
 
-import ru.tinkoff.edu.scrapper.data.entity.Chat;
-import ru.tinkoff.edu.scrapper.data.entity.Link;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import ru.tinkoff.edu.scrapper.data.entity.Chat;
+import ru.tinkoff.edu.scrapper.data.entity.Link;
 
 public class JdbcMapper {
     public static Chat mapChat(ResultSet rs) throws SQLException {

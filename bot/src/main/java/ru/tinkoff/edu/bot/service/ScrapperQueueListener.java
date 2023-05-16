@@ -1,5 +1,6 @@
 package ru.tinkoff.edu.bot.service;
 
+import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -13,9 +14,11 @@ import ru.tinkoff.edu.bot.tg.BotMessageSender;
 public class ScrapperQueueListener {
 
     private final BotMessageSender botMessageSender;
+    private final Counter rabbitCounter;
 
     @RabbitHandler
     public void receiver(LinkUpdate update) {
         botMessageSender.sendMessage(update);
+        rabbitCounter.increment();
     }
 }
